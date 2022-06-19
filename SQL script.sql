@@ -1,10 +1,24 @@
 /*
-SECTION 1: Create the database and tables
+	Create Database
+*/
+CREATE DATABASE IF NOT EXISTS jaunty_coffee_co;
+USE jaunty_coffee_co;
+
+/*
+	DROP TABLES / DB
 */
 
-CREATE DATABASE IF NOT EXISTS jaunty_coffee_co;
+DROP TABLE IF EXISTS COFFEE;
+DROP TABLE IF EXISTS SUPPLIER;
+DROP TABLE IF EXISTS EMPLOYEE;
+DROP TABLE IF EXISTS COFFEE_SHOP;
 
-USE jaunty_coffee_co;
+/*
+----------------------------------
+	SECTION 1: Create Tables
+----------------------------------
+*/
+
 
 CREATE TABLE COFFEE_SHOP(
 	shop_id INT,
@@ -56,10 +70,13 @@ CREATE TABLE COFFEE(
 -- DESCRIBE COFFEE;
 
 /*
-SECTION 2: Insert 3 lines of data into each table
+---------------------------------------------------------
+	SECTION 2: Insert 3 data points into each table
+---------------------------------------------------------
 */
 
 -- COFFEE SHOP TABLE
+
 INSERT INTO COFFEE_SHOP 
 	VALUES (1, 'Starbucks', 'Pittsburgh', 'PA');
 INSERT INTO COFFEE_SHOP
@@ -72,17 +89,23 @@ SELECT * FROM COFFEE_SHOP;
 
 
 -- EMPLOYEE TABLE 
+
 INSERT INTO EMPLOYEE
 	VALUES (1, 'Eddie', 'Blanciak', '2022-06-19', 'Developer', 1);
 INSERT INTO EMPLOYEE
 	VALUES (2, 'Joe', 'Smith', '2022-06-19', 'Java Developer', 2);
 INSERT INTO EMPLOYEE
 	VALUES (3, 'Mary', 'Toy', '2022-06-19', 'C++ Developer', 3);
+INSERT INTO EMPLOYEE
+	VALUES (4, 'Jon', 'Doe', '2022-06-19', 'Android Developer', 3);
+INSERT INTO EMPLOYEE
+	VALUES (5, 'Henry', 'Watt', '2022-06-19', 'Barista', 3);
     
 SELECT * FROM EMPLOYEE;
 -- DELETE FROM EMPLOYEE;
 
 -- SUPPLIER TABLE --
+
 INSERT INTO SUPPLIER 
 	VALUES (1, 'Big Coffee Supplier', 'USA', 'Salesman Joe', 'joe@bigcoffeesupplier.com');
 INSERT INTO SUPPLIER 
@@ -94,34 +117,60 @@ SELECT * FROM SUPPLIER;
 -- DELETE FROM SUPPLIER;
 
 -- COFFEE TABLE --
+
 INSERT INTO COFFEE 
 	VALUES (1, 1, 1, 'Really Good Coffee', 10.50);
 INSERT INTO COFFEE 
 	VALUES (2, 2, 2, 'Really Okay Coffee', 5.50);
 INSERT INTO COFFEE 
-	VALUES (3, 3, 2, 'Really Bad Coffee', 1.50);
+	VALUES (3, 3, 3, 'Really Bad Coffee', 1.50);
 
 SELECT * FROM COFFEE;
--- DELETE FROM COFFEE;
+DELETE FROM COFFEE;
 
 
 /*
- SECTION 3: CREATE VIEW
+----------------------------------
+	SECTION 3: Create View
+ ---------------------------------
 */
 
 CREATE VIEW EMPLOYEE_VIEW AS
 	SELECT employee_id, CONCAT(first_name, ' ', last_name) AS employee_full_name, hire_date, job_title, shop_id
     FROM EMPLOYEE;
 
-DROP VIEW employee_view;
-SELECT * FROM EMPLOYEE;
+-- DROP VIEW employee_view;
+-- SELECT * FROM EMPLOYEE;
+
 /*
- DROP TABLES / DB
+----------------------------------
+	SECTION 4: Create Index
+ ---------------------------------
 */
 
--- DROP TABLE IF EXISTS COFFEE;
--- DROP TABLE IF EXISTS SUPPLIER;
--- DROP TABLE IF EXISTS EMPLOYEE;
--- DROP TABLE IF EXISTS COFFEE_SHOP;
-DROP DATABASE IF EXISTS jaunty_coffee_co 
+CREATE INDEX coffee_name
+	ON COFFEE (coffee_name);
+    
+SHOW INDEX FROM COFFEE;
 
+-- DROP INDEX coffee_name ON COFFEE;-- 
+/*
+----------------------------------
+	SECTION 5: Create an SELECT-FROM-WHERE
+ ---------------------------------
+*/
+
+SELECT first_name AS 'First Name', last_name AS 'Last Name', job_title AS 'Job Title'
+	FROM EMPLOYEE
+    WHERE job_title LIKE '%developer';
+
+/*
+----------------------------------
+	SECTION 6: Create Join (3 tables)
+ ---------------------------------
+*/
+
+SELECT COFFEE_SHOP.shop_name AS 'Shop Name', COFFEE.coffee_name AS 'Coffee Brand Name', COFFEE.price_per_pound AS 'Price Per LB', SUPPLIER.company_name AS 'Coffee Supplier'
+	FROM ((COFFEE
+    INNER JOIN COFFEE_SHOP ON  COFFEE.shop_id = COFFEE_SHOP.shop_id)
+    INNER JOIN SUPPLIER ON COFFEE.supplier_id = SUPPLIER.supplier_id);
